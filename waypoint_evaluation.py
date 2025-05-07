@@ -4,7 +4,6 @@ import os
 def read_map_from_file(filename):
     grid = []
     start = None
-    goal = None
     
     with open(filename, 'r') as file:
         for y, line in enumerate(file):
@@ -19,18 +18,15 @@ def read_map_from_file(filename):
                 if val == '*':
                     start = (y, x)
                     row.append(0)  # Giả sử vị trí bắt đầu là 0 (có thể đi qua)
-                elif val == '#':
-                    goal = (y, x)
-                    row.append(0)  # Giả sử vị trí đích là 0 (có thể đi qua)
                 else:
                     row.append(int(val))
             
             grid.append(row)
     
-    if start is None or goal is None:
-        raise ValueError("Map must contain both start '*' and goal '#'")
+    if start is None:
+        raise ValueError("Map must contain start")
     
-    return grid, start, goal
+    return grid, start
 
 
 def read_waypoints_from_file(filename):
