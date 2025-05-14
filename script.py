@@ -28,33 +28,41 @@ def run_script(script_name):
         return False
 
 def main():
+    # Number of iterations to run the pipeline
+    iterations = 10  # Change this value as needed
+
     # List of scripts to run in order
     scripts = [
         "map_generate.py",
         "waypoint_gpt.py",
         "waypoint_evaluation.py"
     ]
-    
+
     # Check if all scripts exist before running
     missing_scripts = []
     for script in scripts:
         if not os.path.isfile(script):
             missing_scripts.append(script)
-    
+
     if missing_scripts:
         print("Error: The following script files are missing:")
         for script in missing_scripts:
             print(f"- {script}")
         return
-    
-    # Run each script in sequence
-    for script in scripts:
-        success = run_script(script)
-        if not success:
-            print(f"Pipeline stopped due to error in {script}")
-            break
-        time.sleep(1)  # Small delay between scripts
-    
+
+    # Run the pipeline for the specified number of iterations
+    for iteration in range(1, iterations + 1):
+        print(f"\n{'='*50}")
+        print(f"Iteration {iteration}/{iterations}")
+        print(f"{'='*50}")
+
+        for script in scripts:
+            success = run_script(script)
+            if not success:
+                print(f"Pipeline stopped due to error in {script}")
+                return
+            time.sleep(1)  # Small delay between scripts
+
     print("\nPipeline completed!")
 
 if __name__ == "__main__":

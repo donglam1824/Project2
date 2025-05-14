@@ -33,26 +33,7 @@ def create_square_map(size, obstacle_ratio=0.2, max_attempts=50):
         c = idx % cols
         map_grid[r, c] = 1
 
-    # Chọn điểm xuất phát ngẫu nhiên (phải là ô trống)
-    def get_random_empty_point(half=None):
-        while True:
-            if half == 'first':
-                row = random.randint(0, size // 2 - 1)
-                col = random.randint(0, size - 1)
-            elif half == 'second':
-                row = random.randint(size // 2, size - 1)
-                col = random.randint(0, size - 1)
-            else:
-                row = random.randint(0, size - 1)
-                col = random.randint(0, size - 1)
-            
-            if map_grid[row, col] == 0:
-                return (row, col)
-    
-    # Chọn điểm xuất phát ở nửa đầu bản đồ
-    start_pos = get_random_empty_point(half='first')
-
-    return map_grid, start_pos
+    return map_grid
 
 def visualize_map(map_grid, start_pos, end_pos, path=None):
     """
@@ -126,17 +107,17 @@ def main():
     #     return
     size = 11
     # Sử dụng tỷ lệ chướng ngại vật cố định
-    obstacle_ratio = 0.2
+    obstacle_ratio = 0.1
     
     # Tạo bản đồ
-    map_grid, start_pos = create_square_map(size, obstacle_ratio)
+    map_grid = create_square_map(size, obstacle_ratio)
     
     # In bản đồ ra console
     print(f"\n{size}x{size} (ostacel ratio {obstacle_ratio:.1%}):")
-    print(map_to_string(map_grid, start_pos))
+    print(map_to_string(map_grid, None))
     
     # Lưu bản đồ vào file
-    filename, timestamp = save_map_to_file(map_grid, size, start_pos)
+    filename, timestamp = save_map_to_file(map_grid, size, None)
     print(f"\nMap written: {filename}")
             
 
