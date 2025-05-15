@@ -105,7 +105,7 @@ def main():
     # if size < 2:
     #     print("Kích thước bản đồ phải ít nhất là 2x2")
     #     return
-    size = 11
+    size = 19
     # Sử dụng tỷ lệ chướng ngại vật cố định
     obstacle_ratio = 0.1
     

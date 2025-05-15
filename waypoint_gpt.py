@@ -10,22 +10,11 @@ def read_map_from_file(filename):
             map_data.append(row)
     return map_data
 
-# Find new start and end points
-def find_points(map_data):
-    # Always start from the top-left corner (0, 0)
-    start = (0, 0)
-    end = None
-    for i, row in enumerate(map_data):
-        for j, val in enumerate(row):
-            if val == '#':
-                end = (i, j)
-    return start, end
-
 # Adjust the directions for 4 movement (up, down, left, right)
 directions_4 = [(-1, 0), (1, 0), (0, -1), (0, 1)]
 
 # Lawnmower path planning algorithm with obstacle avoidance
-def lawnmower_path_planning_with_obstacle_avoidance(map_data, start):
+def lawnmower_path_planning_with_obstacle_avoidance(map_data):
     rows, cols = len(map_data), len(map_data[0])
     waypoints = []
 
@@ -104,16 +93,8 @@ def main():
     map_data = read_map_from_file('input_map.txt')
     logging.debug(f"Map data: {map_data}")
 
-    # Find start and end points
-    start, end = find_points(map_data)
-    logging.debug(f"Start point: {start}, End point: {end}")
-
-    if not start:
-        logging.error("No valid starting point found in the map.")
-        return
-
     # Run lawnmower path planning algorithm with obstacle avoidance
-    waypoints = lawnmower_path_planning_with_obstacle_avoidance(map_data, start)
+    waypoints = lawnmower_path_planning_with_obstacle_avoidance(map_data)
     logging.debug(f"Generated waypoints: {waypoints}")
 
     # Write waypoints to file
