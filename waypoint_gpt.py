@@ -19,6 +19,9 @@ def find_points(map_data):
                 end = (i, j)
     return start, end
 
+map_data = read_map_from_file('input_map.txt')
+start, end = find_points(map_data)
+
 # Adjust the directions for 4 movement (up, down, left, right)
 directions_4 = [(-1, 0), (1, 0), (0, -1), (0, 1)]
 
@@ -28,6 +31,7 @@ def refined_coverage_path_planning(map_data, start):
     visited = set()
     waypoints = []
     current = start
+
     def get_adjacent_unvisited(cell):
         adj_cells = []
         for dx, dy in directions_4:
@@ -35,9 +39,11 @@ def refined_coverage_path_planning(map_data, start):
             if 0 <= nx < rows and 0 <= ny < cols and map_data[nx][ny] != '1' and (nx, ny) not in visited:
                 adj_cells.append((nx, ny))
         return adj_cells
+
     stack = [current]
     visited.add(current)
     waypoints.append(current)
+
     while stack:
         current = stack[-1]
         adj_cells = get_adjacent_unvisited(current)
@@ -54,6 +60,7 @@ def refined_coverage_path_planning(map_data, start):
                 if path_to_unvisited:
                     for cell in path_to_unvisited[1:]:  # Skip current position, already added
                         waypoints.append(cell)
+
     return waypoints
 
 # Function to perform BFS search
@@ -62,16 +69,19 @@ def bfs(map_data, start, end):
     visited = set()
     queue = [(start, [start])]
     visited.add(start)
+
     while queue:
         (x, y), path = queue.pop(0)
         if (x, y) == end:
             return path
+
         for dx, dy in directions_4:
             nx, ny = x + dx, y + dy
             if 0 <= nx < rows and 0 <= ny < cols and map_data[nx][ny] != '1':
                 if (nx, ny) not in visited:
                     visited.add((nx, ny))
                     queue.append(((nx, ny), path + [(nx, ny)]))
+
     return None
 
 # Function to write waypoints to file

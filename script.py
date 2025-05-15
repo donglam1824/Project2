@@ -48,12 +48,15 @@ def main():
         return
     
     # Run each script in sequence
-    for script in scripts:
-        success = run_script(script)
-        if not success:
-            print(f"Pipeline stopped due to error in {script}")
-            break
-        time.sleep(1)  # Small delay between scripts
+    test = 10
+    for i in range(test):
+        print(f"Test{i}/{test}")
+        for script in scripts:
+            success = run_script(script)
+            if not success:
+                print(f"Pipeline stopped due to error in {script}")
+                continue
+            time.sleep(1)  # Small delay between scripts
     
     print("\nPipeline completed!")
 

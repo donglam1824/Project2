@@ -127,7 +127,7 @@ def run_waypoint_evaluation_from_file(map_grid, filename):
     #     print("Waypoints rejected based on evaluation criteria.")
     
     # Đường dẫn file Excel
-    excel_file = "waypoint_report.xlsx"
+    excel_file = "bfs.xlsx"
     
     # Chuẩn bị dữ liệu mới
     new_data = {
