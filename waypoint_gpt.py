@@ -90,7 +90,8 @@ logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %
 # Main function
 def main():
     # Read map from file
-    map_data = read_map_from_file('input_map.txt')
+    # map_data = read_map_from_file('input_map.txt')
+    map_data = read_map_from_file('apartment_map.txt')
     logging.debug(f"Map data: {map_data}")
 
     # Run lawnmower path planning algorithm with obstacle avoidance

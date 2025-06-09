@@ -33,9 +33,9 @@ def main():
 
     # List of scripts to run in order
     scripts = [
-        "map_generate.py",
-        "waypoint_gpt.py",
-        "waypoint_evaluation.py"
+        "apartment_floorplan_generate.py",
+        "waypoint_gpt_room_priority.py",
+        "simulation.py"
     ]
 
     # Check if all scripts exist before running

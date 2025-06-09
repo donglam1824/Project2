@@ -133,5 +133,5 @@ class WaypointEvaluator:
             print(f"Permission denied: Unable to write to {self.excel_file}")
 
 if __name__ == "__main__":
-    evaluator = WaypointEvaluator('input_map.txt', 'waypoint_gpt.txt', 'lawnmower.xlsx')
+    evaluator = WaypointEvaluator('apartment_map.txt', 'waypoint_gpt.txt', 'lawnmower.xlsx')
     evaluator.save_to_excel()
