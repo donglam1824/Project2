@@ -408,7 +408,7 @@ class WaypointAnalyzer:
             plt.plot(x_plot[-1], y_plot[-1], 'ro', markersize=10, label='End')
             
             # Hiển thị số thứ tự một số điểm
-            step = 20  
+            step = 10  
             for i in range(0, len(x_plot), step):
                 plt.text(x_plot[i], y_plot[i], str(i), fontsize=8, 
                         ha='center', va='center', 
