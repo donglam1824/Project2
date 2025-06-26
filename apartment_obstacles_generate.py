@@ -79,7 +79,7 @@ def create_apartment_floorplan_with_obstacles(width=40, height=30):
             room_w = room_width - (1 if j < 2 else 0)
             room_h = room_height - (1 if i < 2 else 0)
             add_obstacles_to_room(grid, room_x, room_y, room_w, room_h, 
-                                obstacle_ratio=random.uniform(0.05, 0.15))
+                                obstacle_ratio=random.uniform(0.03, 0.05))
     
     return grid
 
@@ -101,7 +101,7 @@ def visualize_map(grid):
 def main():
     grid = create_apartment_floorplan_with_obstacles()
     save_map_to_file(grid)
-    visualize_map(grid)
+    # visualize_map(grid)
 
 if __name__ == "__main__":
     main()

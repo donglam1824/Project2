@@ -436,7 +436,7 @@ class WaypointAnalyzer:
             plt.savefig(output_image_path, dpi=300, bbox_inches='tight')
             print(f"Analysis image saved to {output_image_path}")
         
-        plt.show()
+        # plt.show()
     
     def print_analysis_report(self):
         """In báo cáo phân tích chi tiết"""

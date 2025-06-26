@@ -33,8 +33,8 @@ def main():
 
     # List of scripts to run in order
     scripts = [
-        "apartment_floorplan_generate.py",
-        "waypoint_gpt_room_priority.py",
+        "apartment_obstacles_generate.py",
+        "waypoint_gpt_room_priority_obstacle.py",
         "simulation.py"
     ]
 
