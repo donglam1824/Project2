@@ -10,13 +10,14 @@ from openpyxl import Workbook
 from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
 
 class WaypointAnalyzer:
-    def __init__(self, map_file, waypoint_file):
+    def __init__(self, map_file, waypoint_file=None):
         self.map_file = map_file
         self.waypoint_file = waypoint_file
         self.map_grid = None
         self.waypoints = []
         self.load_map()
-        self.load_waypoints()
+        if waypoint_file:
+            self.load_waypoints()
     
     def load_map(self):
         """Đọc bản đồ từ file"""
@@ -32,16 +33,25 @@ class WaypointAnalyzer:
         print(f"Map loaded: {self.map_grid.shape[0]}x{self.map_grid.shape[1]}")
     
     def load_waypoints(self):
-        """Đọc waypoints từ file"""
-        with open(self.waypoint_file, 'r') as f:
-            for line in f:
-                if line.strip():
-                    # Parse (x, y) format
-                    coords = line.strip().replace('(', '').replace(')', '').split(',')
-                    x, y = int(coords[0].strip()), int(coords[1].strip())
-                    self.waypoints.append((x, y))
-        
-        print(f"Loaded {len(self.waypoints)} waypoints")
+        """Doc waypoints tu file"""
+        if not self.waypoint_file:
+            print("No waypoint file specified - map only mode")
+            return
+            
+        try:
+            with open(self.waypoint_file, 'r') as f:
+                for line in f:
+                    if line.strip():
+                        # Parse (x, y) format
+                        coords = line.strip().replace('(', '').replace(')', '').split(',')
+                        x, y = int(coords[0].strip()), int(coords[1].strip())
+                        self.waypoints.append((x, y))
+            
+            print(f"Loaded {len(self.waypoints)} waypoints")
+        except FileNotFoundError:
+            print(f"Waypoint file {self.waypoint_file} not found - displaying map only")
+        except Exception as e:
+            print(f"Error loading waypoints: {e} - displaying map only")
     
     def calculate_path_distance(self):
         """Tính tổng độ dài đường đi"""
@@ -377,37 +387,37 @@ class WaypointAnalyzer:
         print(f"New analysis saved in sheet: {sheet_name}")
         return filename
     
-    def visualize_path(self, save_image=True):
-        """Vẽ bản đồ và đường đi"""
-        # Tạo thư mục image nếu chưa tồn tại
+    def visualize_path(self, save_image=True, show_map_only=False):
+        """Ve ban do va duong di"""
+        # Tao thu muc image neu chua ton tai
         if not os.path.exists('image'):
             os.makedirs('image')
         
         plt.figure(figsize=(15, 12))
         ax = plt.gca()
         
-        # Sử dụng màu sắc như code gốc: trắng (trống), đỏ (tường)
+        # Su dung mau sac nhu code goc: trang (trong), do (tuong), xanh la (tram sac)
         colors = ['#FFFFFF', '#F44336', '#4CAF50']
         cmap = ListedColormap(colors)
         
-        # Vẽ bản đồ gốc không thay đổi màu
+        # Ve ban do goc khong thay doi mau
         plt.pcolormesh(self.map_grid, cmap=cmap, edgecolors='k', linewidth=1.5)
         
-        # Vẽ đường đi
-        if self.waypoints:
+        # Ve duong di neu co waypoints va khong phai che do chi hien thi ban do
+        if self.waypoints and not show_map_only:
             x_coords = [coord[1] for coord in self.waypoints]  # y coordinate for plotting
             y_coords = [coord[0] for coord in self.waypoints]  # x coordinate for plotting
             x_plot = [x + 0.5 for x in x_coords]
             y_plot = [y + 0.5 for y in y_coords]
             
-            # Vẽ đường đi
+            # Ve duong di
             plt.plot(x_plot, y_plot, color='#2196F3', linewidth=2, alpha=0.8, label='Robot Path')
             
-            # Đánh dấu điểm bắt đầu và kết thúc
+            # Danh dau diem bat dau va ket thuc
             plt.plot(x_plot[0], y_plot[0], 'go', markersize=10, label='Start')
             plt.plot(x_plot[-1], y_plot[-1], 'ro', markersize=10, label='End')
             
-            # Hiển thị số thứ tự một số điểm
+            # Hien thi so thu tu mot so diem
             step = 10  
             for i in range(0, len(x_plot), step):
                 plt.text(x_plot[i], y_plot[i], str(i), fontsize=8, 
@@ -415,31 +425,63 @@ class WaypointAnalyzer:
                         bbox=dict(boxstyle='round,pad=0.2', facecolor='white', alpha=0.7))
         
         plt.gca().invert_yaxis()
-        plt.title('Robot Path Visualization', fontsize=16, fontweight='bold')
         
-        # Tạo legend
+        # Tieu de thay doi tuy theo che do
+        if show_map_only or not self.waypoints:
+            plt.title(f'Map Visualization - {self.map_file}', fontsize=16, fontweight='bold')
+        else:
+            plt.title(f'Robot Path Visualization - {len(self.waypoints)} waypoints\nMap: {self.map_file}', fontsize=16, fontweight='bold')
+        
+        # Tao legend
         legend_elements = [
             mpatches.Patch(color='#FFFFFF', label='Free Space'),
             mpatches.Patch(color='#F44336', label='Wall'),
-            mpatches.Patch(color='#4CAF50', label='Visited'),
-            plt.Line2D([0], [0], color='#2196F3', linewidth=2, label='Robot Path'),
-            plt.Line2D([0], [0], marker='o', color='g', linewidth=0, markersize=8, label='Start'),
-            plt.Line2D([0], [0], marker='o', color='r', linewidth=0, markersize=8, label='End')
+            mpatches.Patch(color='#4CAF50', label='Charging Station')
         ]
+        
+        # Them legend cho waypoints neu co
+        if self.waypoints and not show_map_only:
+            legend_elements.extend([
+                plt.Line2D([0], [0], color='#2196F3', linewidth=2, label='Robot Path'),
+                plt.Line2D([0], [0], marker='o', color='g', linewidth=0, markersize=8, label='Start'),
+                plt.Line2D([0], [0], marker='o', color='r', linewidth=0, markersize=8, label='End')
+            ])
+        
         plt.legend(handles=legend_elements, loc='upper right', bbox_to_anchor=(1.15, 1))
         
         plt.tight_layout()
         
         if save_image:
             current_time = datetime.now().strftime('%Y%m%d_%H%M%S')
-            output_image_path = os.path.join('image', f'path_analysis_{current_time}.png')
+            if show_map_only or not self.waypoints:
+                output_image_path = os.path.join('image', f'map_only_{current_time}.png')
+            else:
+                output_image_path = os.path.join('image', f'path_analysis_{current_time}.png')
             plt.savefig(output_image_path, dpi=300, bbox_inches='tight')
-            print(f"Analysis image saved to {output_image_path}")
+            print(f"Image saved to {output_image_path}")
         
-        # plt.show()
+        plt.show()
     
     def print_analysis_report(self):
-        """In báo cáo phân tích chi tiết"""
+        """In bao cao phan tich chi tiet"""
+        if not self.waypoints:
+            print("="*60)
+            print("              MAP INFORMATION")
+            print("="*60)
+            print(f"Map Size: {self.map_grid.shape[0]} x {self.map_grid.shape[1]}")
+            print(f"Map File: {self.map_file}")
+            
+            # Dem so o trong va tuong
+            free_cells = np.sum(self.map_grid == 0)
+            wall_cells = np.sum(self.map_grid == 1)
+            charging_stations = np.sum(self.map_grid == 2)
+            
+            print(f"Free Cells: {free_cells}")
+            print(f"Wall Cells: {wall_cells}")
+            print(f"Charging Stations: {charging_stations}")
+            print("="*60)
+            return None
+            
         results = self.analyze_efficiency()
         
         print("="*60)
@@ -464,18 +506,44 @@ class WaypointAnalyzer:
         
         return results
 
-# Sử dụng class
+def show_map_only(map_file, save_image=True):
+    """Ham tien ich de chi hien thi ban do"""
+    analyzer = WaypointAnalyzer(map_file, None)
+    analyzer.print_analysis_report()
+    analyzer.visualize_path(save_image=save_image, show_map_only=True)
+    return analyzer
+
+# Su dung class
 if __name__ == "__main__":
-    # Khởi tạo analyzer
-    analyzer = WaypointAnalyzer('apartment_map.txt', 'waypoint_gpt.txt')
+    import sys
     
-    # Thực hiện phân tích và in báo cáo
+    # Kiem tra tham so dong lenh
+    if len(sys.argv) < 2:
+        print("Usage:")
+        print("  python simulation.py <map_file> [waypoint_file]")
+        print("  python simulation.py apartment_map.txt                    # Chi hien thi ban do")
+        print("  python simulation.py apartment_map.txt waypoint_gpt.txt   # Hien thi ban do va waypoints")
+        sys.exit(1)
+    
+    map_file = sys.argv[1]
+    waypoint_file = sys.argv[2] if len(sys.argv) > 2 else None
+    
+    # Khoi tao analyzer
+    analyzer = WaypointAnalyzer(map_file, waypoint_file)
+    
+    # Thuc hien phan tich va in bao cao
     results = analyzer.print_analysis_report()
     
-    # Lưu kết quả vào Excel
-    excel_file = analyzer.save_to_excel('apartment.xlsx')
+    # Luu ket qua vao Excel neu co waypoints
+    if analyzer.waypoints:
+        # excel_file = analyzer.save_to_excel('apartment.xlsx')
+        pass
     
-    # Vẽ và lưu hình ảnh
-    analyzer.visualize_path(save_image=True)
+    # Ve va luu hinh anh
+    show_map_only = not bool(analyzer.waypoints)
+    analyzer.visualize_path(save_image=True, show_map_only=show_map_only)
     
-    print(f"\nAll analysis completed! Results saved to {excel_file}")
+    if analyzer.waypoints:
+        print(f"\nWaypoint analysis completed!")
+    else:
+        print(f"\nMap visualization completed!")
