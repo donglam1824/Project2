@@ -79,11 +79,8 @@ def create_apartment_floorplan_with_obstacles(width=40, height=30):
             room_w = room_width - (1 if j < 2 else 0)
             room_h = room_height - (1 if i < 2 else 0)
             add_obstacles_to_room(grid, room_x, room_y, room_w, room_h, 
-<<<<<<< HEAD
-                                obstacle_ratio=random.uniform(0.03, 0.05))
-=======
-                                obstacle_ratio=random.uniform(0.05, 0.1))
->>>>>>> e5aa8c298416d29143526605ab4c34f7a79617e7
+
+            obstacle_ratio=random.uniform(0.05, 0.1))
     
     return grid
 
