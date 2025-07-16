@@ -29,12 +29,12 @@ def run_script(script_name):
 
 def main():
     # Number of iterations to run the pipeline
-    iterations = 10  # Change this value as needed
+    iterations = 20  # Change this value as needed
 
     # List of scripts to run in order
     scripts = [
-        "apartment_obstacles_generate.py",
-        "waypoint_gpt_room_priority_obstacle.py",
+        "apartment_map_with_charging_stations.py",
+        "waypoint_gpt_room_priority_obstacle_energy.py",
         "simulation.py"
     ]
 
